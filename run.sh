@@ -42,6 +42,6 @@ P4A_WHEEL_DIR="$WORKDIR/output"
 
 # --- build ---
 ARCH=${1:-arm64-v8a}
-python3 recipebuild.py -a "$ARCH" -r "$RECIPES" -w "$WORKDIR"
+python3 recipebuild.py -a "$ARCH" -r $RECIPES -w "$WORKDIR"
 
 ls "$P4A_WHEEL_DIR"
