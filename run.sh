@@ -3,7 +3,6 @@ RECIPES="Pillow android apsw atom aubio cffi cryptography ffpyplayer flask freet
 set -e
 
 export PATH=$PATH:~/.local/bin/
-export TERM=xterm-256color
 sudo apt update
 sudo apt install -y git zip unzip openjdk-17-jdk python3-pip python3-virtualenv autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo6 cmake libffi-dev libssl-dev automake autopoint gettext libltdl-dev
 
@@ -38,10 +37,8 @@ cd "$GITHUB_WORKSPACE"
 
 mkdir -p p4aworkdir/output
 WORKDIR=$(realpath p4aworkdir)
-P4A_WHEEL_DIR="$WORKDIR/output"
-
 # --- build ---
 ARCH=${1:-arm64-v8a}
-python3 recipebuild.py -a "$ARCH" -r $RECIPES -w "$WORKDIR"
+P4A_WHEEL_DIR="$WORKDIR/output" TERM=xterm-256color python3 recipebuild.py -a "$ARCH" -r $RECIPES -w "$WORKDIR"
 
 ls "$P4A_WHEEL_DIR"
