@@ -3,8 +3,7 @@ RECIPES="Pillow android apsw atom aubio cffi cryptography ffpyplayer flask freet
 set -e
 
 export PATH=$PATH:~/.local/bin/
-export TERM=dumb
-alias tput='true'
+export TERM=xterm-256color
 sudo apt update
 sudo apt install -y git zip unzip openjdk-17-jdk python3-pip python3-virtualenv autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo6 cmake libffi-dev libssl-dev automake autopoint gettext libltdl-dev
 
