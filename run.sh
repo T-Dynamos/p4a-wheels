@@ -1,5 +1,4 @@
-RECIPES="numpy matplotlib cryptography"
-
+RECIPES="Pillow android apsw atom aubio cffi cryptography ffpyplayer flask freetype-py gevent greenlet grpcio httpx kivy kiwisolver matplotlib numpy pandas pil primp pycairo pydantic-core pyjnius pynacl setuptools sqlalchemy tiktoken uvloop"
 export PATH=$PATH:~/.local/bin/
 
 sudo apt update
@@ -39,5 +38,5 @@ WORKDIR=$(realpath p4aworkdir)
 P4A_WHEEL_DIR=$WORKDIR/output
 
 # build
-P4A_WHEEL_DIR=$WORKDIR/output python3 recipebuild.py -a arm64-v8a -a armeabi-v7a -r $RECIPES -w $WORKDIR
+P4A_WHEEL_DIR=$WORKDIR/output python3 recipebuild.py -a $1 -r $RECIPES -w $WORKDIR
 ls $P4A_WHEEL_DIR

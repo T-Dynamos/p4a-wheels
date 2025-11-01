@@ -6,23 +6,34 @@ on:
   push:
 
 jobs:
-  build-android:
-    name: Build for Android
+  build-arch:
+    name: Build for ${{ matrix.arch }}
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - arch: arm64-v8a
+            artifact_name: whl-arm64-v8a
+          - arch: armeabi-v7a
+            artifact_name: whl-armeabi-v7a
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name:
+
+      - name: Setup Java
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
-          java-version: '17'
-      - name: Build with Buildozer
+          distribution: temurin
+          java-version: 17
+
+      - name: Build WHL files
         run: |
           cd ${{ github.workspace }}
-          bash run.sh
-      - name: Upload artifacts
+          bash run.sh ${{ matrix.arch }}
+
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: whl
+          name: ${{ matrix.artifact_name }}
           path: p4aworkdir/output/*.whl

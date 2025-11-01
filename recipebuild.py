@@ -14,14 +14,14 @@ from pythonforandroid.androidndk import AndroidNDK
 DEFAULT_RECIPES = ["sdl3"]
 NDK_DIR = os.environ["NDK_DIR"]
 
+
 class RecipeBuilder:
     def __init__(self, parsed_args):
         setup_color(True)
         self.build_dir = parsed_args.workdir
         self.init_context(parsed_args)
         self.build_recipes(
-            set(parsed_args.recipes + DEFAULT_RECIPES),
-            set(parsed_args.arch)
+            set(parsed_args.recipes + DEFAULT_RECIPES), set(parsed_args.arch)
         )
 
     def init_context(self, parse_args):
@@ -41,14 +41,17 @@ class RecipeBuilder:
         self.ctx.prepare_bootstrap(bootstrap)
         self.ctx.set_archs(archs)
         self.ctx.bootstrap.distribution = Distribution.get_distribution(
-            self.ctx, name=bootstrap.name, recipes=recipes, archs=archs,
+            self.ctx,
+            name=bootstrap.name,
+            recipes=recipes,
+            archs=archs,
         )
         self.ctx.ndk = AndroidNDK(NDK_DIR)
         recipes = [Recipe.get_recipe(recipe, self.ctx) for recipe in _recipes]
 
         self.ctx.recipe_build_order = _recipes
         for recipe in recipes:
-           recipe.download_if_necessary()
+            recipe.download_if_necessary()
 
         for arch in self.ctx.archs:
             info_main("# Building all recipes for arch {}".format(arch.arch))
@@ -68,17 +71,29 @@ class RecipeBuilder:
             info_main("# Building recipes")
             for recipe in recipes:
                 info_main("Building {} for {}".format(recipe.name, arch.arch))
-                if recipe.should_build(arch):
-                    recipe.build_arch(arch)
-                else:
-                    info("{} said it is already built, skipping".format(recipe.name))
+                recipe.build_arch(arch)
+                # if recipe.should_build(arch):
+                #     recipe.build_arch(arch)
+                # else:
+                #     info("{} said it is already built, skipping".format(recipe.name))
                 recipe.install_libraries(arch)
+
 
 if __name__ == "__main__":
     parser = ArgumentParser(description="Build and package recipes.")
-    parser.add_argument('-r', '--recipes', nargs='+', help='Recipes to build.', required=True)
-    parser.add_argument('-a', '--arch', nargs='+', help='Android arch(s) to build.', required=True)
-    parser.add_argument('-w', '--workdir', type=str, help="Workdir for building recipes.", required=True)
-    parser.add_argument('-m', '--min-api', type=int, help="Android ndk (minimum) api.", default=24)
-    parser.add_argument('-t', '--target-api', type=int, help="Android target api.", default=24)
+    parser.add_argument(
+        "-r", "--recipes", nargs="+", help="Recipes to build.", required=True
+    )
+    parser.add_argument(
+        "-a", "--arch", nargs="+", help="Android arch(s) to build.", required=True
+    )
+    parser.add_argument(
+        "-w", "--workdir", type=str, help="Workdir for building recipes.", required=True
+    )
+    parser.add_argument(
+        "-m", "--min-api", type=int, help="Android ndk (minimum) api.", default=24
+    )
+    parser.add_argument(
+        "-t", "--target-api", type=int, help="Android target api.", default=24
+    )
     RecipeBuilder(parser.parse_args())
