@@ -11,7 +11,7 @@ from pythonforandroid.bootstraps.empty import bootstrap
 from pythonforandroid.distribution import Distribution
 from pythonforandroid.androidndk import AndroidNDK
 
-DEFAULT_RECIPES = ["sdl3"]
+DEFAULT_RECIPES = ["sdl2"]
 NDK_DIR = os.environ["NDK_DIR"]
 
 
