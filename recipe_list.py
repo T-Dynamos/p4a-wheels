@@ -14,7 +14,7 @@ RECIPES_DIR = P4A_PATH / "recipes"
 
 BASES = (PyProjectRecipe, MesonRecipe, RustCompiledComponentsRecipe)
 
-BLACKLIST = {"libcairo", "scipy"}  # add more if needed
+BLACKLIST = {"libcairo", "scipy", "pydantic-core"}  # add more if needed
 
 
 def find_recipes():
