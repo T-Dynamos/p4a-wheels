@@ -26,7 +26,7 @@ export BUILDOZER_WARN_ON_ROOT=0
 
 # setup p4a 
 pip3 install --user --upgrade buildozer cython virtualenv
-pip3 install git+https://github.com/kivy/python-for-android
+pip3 install git+https://github.com/kivy/python-for-android@develop
 
 cd "$GITHUB_WORKSPACE"
 mkdir p4aworkdir
