@@ -28,6 +28,7 @@ export BUILDOZER_WARN_ON_ROOT=0
 pip3 install --user --upgrade buildozer cython virtualenv
 pip3 install git+https://github.com/kivy/python-for-android
 
+cd "$GITHUB_WORKSPACE"
 mkdir p4aworkdir
 python3 recipebuild.py -a arm64-v8a -a armeabi-v7a -r numpy -w p4aworkdir
 ls p4aworkdir/output/
