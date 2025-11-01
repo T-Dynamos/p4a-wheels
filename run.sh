@@ -30,5 +30,7 @@ pip3 install git+https://github.com/kivy/python-for-android@develop
 
 cd "$GITHUB_WORKSPACE"
 mkdir p4aworkdir
-python3 recipebuild.py -a arm64-v8a -a armeabi-v7a -r numpy -w p4aworkdir
-ls p4aworkdir/output/
+
+WORKDIR=$(realpath p4aworkdir)
+python3 recipebuild.py -a arm64-v8a -a armeabi-v7a -r numpy -w $WORKDIR
+ls $WORKDIR/output
