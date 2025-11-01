@@ -29,8 +29,12 @@ pip3 install --user --upgrade buildozer cython virtualenv
 pip3 install git+https://github.com/kivy/python-for-android@develop
 
 cd "$GITHUB_WORKSPACE"
+
 mkdir p4aworkdir
+mkdir p4aworkdir/output
 
 WORKDIR=$(realpath p4aworkdir)
+P4A_WHEEL_DIR=$WORKDIR/output
+
+# build
 python3 recipebuild.py -a arm64-v8a -a armeabi-v7a -r numpy -w $WORKDIR
-ls $WORKDIR/output
