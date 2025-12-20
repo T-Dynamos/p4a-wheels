@@ -16,7 +16,7 @@ RECIPES_DIR = P4A_PATH / "recipes"
 BASES = (PyProjectRecipe, MesonRecipe, RustCompiledComponentsRecipe)
 
 BLACKLIST = {"libcairo", "scipy",
-            "ffpyplayer", "uvloop", "pil", "aubio", "greenlet"
+            "ffpyplayer", "uvloop", "pil", "aubio", "greenlet", "grpcio"
 }  # add more if needed
 
 
