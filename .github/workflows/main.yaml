@@ -29,6 +29,7 @@ jobs:
           java-version: 17
 
       - name: Build WHL files
+        id: build_whl
         continue-on-error: true
         run: |
           cd ${{ github.workspace }}
