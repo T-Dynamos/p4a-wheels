@@ -39,8 +39,6 @@ jobs:
       - name: Debug with tmate
         if: steps.build_whl.outcome == 'failure'
         uses: mxschmitt/action-tmate@v3
-        with:
-          limit-access-to-actor: true
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
