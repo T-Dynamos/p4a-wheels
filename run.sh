@@ -1,4 +1,4 @@
-RECIPES="Pillow android apsw atom cffi cryptography flask freetype-py gevent grpcio httpx kivy kiwisolver matplotlib numpy pandas primp pycairo pyjnius pynacl setuptools sqlalchemy tiktoken"
+RECIPES="Pillow android apsw atom cffi cryptography flask freetype-py gevent httpx kivy kiwisolver matplotlib numpy pandas primp pycairo pydantic-core pyjnius pynacl setuptools sqlalchemy tiktoken"
 
 set -e
 
