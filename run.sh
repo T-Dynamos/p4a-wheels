@@ -31,7 +31,7 @@ export APP_ANDROID_ACCEPT_SDK_LICENSE=1
 export BUILDOZER_WARN_ON_ROOT=0
 
 pip3 install --user --upgrade buildozer cython virtualenv
-pip3 install git+https://github.com/T-Dynamos/python-for-android@recipe_fix
+pip3 install git+https://github.com/kivy/python-for-android@develop
 
 # https://github.com/kivy/python-for-android@develop
 
