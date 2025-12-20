@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>p4a · Python Package Index</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0d1117;
+      --fg: #c9d1d9;
+      --muted: #8b949e;
+      --accent: #58a6ff;
+      --border: #30363d;
+      --code-bg: #161b22;
+    }
+
+    html, body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--fg);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    }
+
+    main {
+      max-width: 720px;
+      margin: 4rem auto;
+      padding: 0 1.25rem;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 0.25rem;
+    }
+
+    p {
+      line-height: 1.6;
+      color: var(--muted);
+    }
+
+    hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 2rem 0;
+    }
+
+    code, pre {
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      background: var(--code-bg);
+      color: var(--fg);
+    }
+
+    pre {
+      padding: 1rem;
+      border-radius: 6px;
+      overflow-x: auto;
+      border: 1px solid var(--border);
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    footer {
+      margin-top: 3rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+  </style>
+</head>
+
+<body>
+  <main>
+    <h1>p4a Python Package Index</h1>
+    <p>
+      This is a <strong>PEP 503 “simple” Python package index</strong>.
+      It is intended for use with <code>pip</code>, not for browsing.
+    </p>
+
+    <hr>
+
+    <p>To install packages from this index:</p>
+
+    <pre><code>pip install &lt;package&gt; \
+  --index-url https://&lt;user&gt;.github.io/&lt;repo&gt;/simple \
+  --trusted-host &lt;user&gt;.github.io
+</code></pre>
+
+    <p>
+      You may also use it as a fallback alongside PyPI:
+    </p>
+
+    <pre><code>pip install &lt;package&gt; \
+  --extra-index-url https://&lt;user&gt;.github.io/&lt;repo&gt;/simple
+</code></pre>
+
+    <hr>
+
+    <p>
+      The package indexes themselves live under:
+      <code>/simple/&lt;package-name&gt;/</code>
+    </p>
+
+    <footer>
+      <p>
+        Static index · GitHub Pages · p4a
+      </p>
+    </footer>
+  </main>
+</body>
+</html>
