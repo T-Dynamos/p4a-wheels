@@ -29,9 +29,17 @@ jobs:
           java-version: 17
 
       - name: Build WHL files
+        continue-on-error: true
         run: |
           cd ${{ github.workspace }}
           bash run.sh ${{ matrix.arch }}
+
+      # Start tmate ONLY if build failed
+      - name: Debug with tmate
+        if: steps.build_whl.outcome == 'failure'
+        uses: mxschmitt/action-tmate@v3
+        with:
+          limit-access-to-actor: true
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
