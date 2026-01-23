@@ -8,7 +8,6 @@ jobs:
     name: Build for ${{ matrix.arch }}
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: false
       matrix:
         include:
           - arch: arm64-v8a
