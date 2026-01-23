@@ -15,8 +15,15 @@ RECIPES_DIR = P4A_PATH / "recipes"
 
 BASES = (PyProjectRecipe, MesonRecipe, RustCompiledComponentsRecipe)
 
-BLACKLIST = {"libcairo",
-            "ffpyplayer", "uvloop", "pil", "aubio", "greenlet", "grpcio"
+BLACKLIST = {
+    "libcairo",
+    "ffpyplayer",
+    "uvloop",
+    "pil",
+    "aubio",
+    "greenlet",
+    "grpcio",
+    "tiktoken",
 }  # add more if needed
 
 
@@ -72,8 +79,11 @@ def main():
 
     # yes bad code
     r = f'RECIPES="{ " ".join(names).strip() }"\n'
-    with open("run.sh") as f: lines = [l for l in f if not l.strip().startswith("RECIPES=")]
-    with open("run.sh","w") as f: f.writelines([r]+lines)
+    with open("run.sh") as f:
+        lines = [l for l in f if not l.strip().startswith("RECIPES=")]
+    with open("run.sh", "w") as f:
+        f.writelines([r] + lines)
+
 
 if __name__ == "__main__":
     main()
