@@ -22,10 +22,12 @@ out_root = Path(sys.argv[3])
 if not wheel_root.is_dir():
     raise SystemExit("wheel_root_dir is not a directory")
 
+
 def pkg_name_from_wheel(filename: str) -> str:
     """Extract normalized package name from wheel using packaging."""
     name, _, _, _ = parse_wheel_filename(filename)
     return name.lower().replace("_", "-")
+
 
 # Collect wheels by package
 packages = defaultdict(list)
@@ -56,7 +58,8 @@ for pkg, wheels in packages.items():
 # Generate human-friendly landing page at p4a/index.html
 landing_path = p4a_root / "index.html"
 with landing_path.open("w", encoding="utf-8") as f:
-    f.write(f"""<!doctype html>
+    f.write(
+        f"""<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -89,24 +92,31 @@ footer {{ margin-top:3rem; font-size:0.85rem; color: var(--muted); }}
 <h1>p4a Python Package Index</h1>
 <p>This is a <strong>PEP 503 “simple” Python package index</strong> for use with <code>pip</code>.</p>
 <hr>
+
 <p>To install a package from this index:</p>
-<pre><code>pip install &lt;package&gt; \\
-  --index-url https://your-username.github.io/your-repo/p4a/&lt;package&gt;/ \\
-  --trusted-host your-username.github.io
+<pre><code>pip install \\
+  --disable-pip-version-check \\
+  --platform=android_24_arm64_v8a \\
+  --only-binary=:all: \\
+  --extra-index-url https://anshdadwal.is-a.dev/p4a-wheels/p4a \\
+  --target . &lt;package&gt;
 </code></pre>
-<hr>
+
 <p>Available packages:</p>
 <ul>
-""")
+"""
+    )
     for pkg in sorted(packages):
         f.write(f'<li><a href="{pkg}/">{pkg}</a></li>\n')
-    f.write("""</ul>
+    f.write(
+        """</ul>
 <footer>
 <p>Static p4a index · GitHub Pages</p>
 </footer>
 </main>
 </body>
 </html>
-""")
+"""
+    )
 
 print(f"p4a: updated indexes for {len(packages)} packages + landing page")

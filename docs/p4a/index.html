@@ -31,12 +31,16 @@ footer { margin-top:3rem; font-size:0.85rem; color: var(--muted); }
 <h1>p4a Python Package Index</h1>
 <p>This is a <strong>PEP 503 “simple” Python package index</strong> for use with <code>pip</code>.</p>
 <hr>
+
 <p>To install a package from this index:</p>
-<pre><code>pip install &lt;package&gt; \
-  --index-url https://your-username.github.io/your-repo/p4a/&lt;package&gt;/ \
-  --trusted-host your-username.github.io
+<pre><code>pip install \
+  --disable-pip-version-check \
+  --platform=android_24_arm64_v8a \
+  --only-binary=:all: \
+  --extra-index-url https://anshdadwal.is-a.dev/p4a-wheels/p4a \
+  --target . &lt;package&gt;
 </code></pre>
-<hr>
+
 <p>Available packages:</p>
 <ul>
 <li><a href="android/">android</a></li>
