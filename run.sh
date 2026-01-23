@@ -1,4 +1,4 @@
-RECIPES="Pillow android apsw atom cffi cryptography flask freetype-py gevent httpx kivy kiwisolver matplotlib numpy pandas primp pycairo pydantic-core pyjnius pynacl setuptools sqlalchemy"
+RECIPES="Pillow android apsw atom cffi cryptography flask freetype-py gevent httpx kivy kiwisolver materialyoucolor matplotlib numpy pandas pycairo pycryptodome pydantic-core pyjnius pynacl scipy sqlalchemy"
 
 set -e
 
@@ -45,5 +45,3 @@ WORKDIR=$(realpath p4aworkdir)
 # --- build ---
 ARCH=${1:-arm64-v8a}
 P4A_WHEEL_DIR="$WORKDIR/output" TERM=xterm-256color python3 recipebuild.py -a "$ARCH" -r $RECIPES -w "$WORKDIR"
-
-ls "$P4A_WHEEL_DIR"

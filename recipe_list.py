@@ -24,6 +24,8 @@ BLACKLIST = {
     "greenlet",
     "grpcio",
     "tiktoken",
+    "primp",
+    "setuptools",
 }  # add more if needed
 
 
