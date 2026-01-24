@@ -1,4 +1,4 @@
-RECIPES="Pillow android apsw atom cffi cryptography flask freetype-py gevent httpx kivy kiwisolver materialyoucolor matplotlib numpy pandas pycairo pycryptodome pydantic-core pyjnius pynacl sqlalchemy"
+RECIPES="Pillow android apsw atom cffi cryptography flask freetype-py gevent httpx kivy kiwisolver materialyoucolor matplotlib numpy pandas primp pycairo pycryptodome pydantic-core pyjnius pynacl sqlalchemy tiktoken"
 
 set -e
 
@@ -34,7 +34,7 @@ export APP_ANDROID_ACCEPT_SDK_LICENSE=1
 export BUILDOZER_WARN_ON_ROOT=0
 
 pip3 install --user --upgrade buildozer cython virtualenv
-pip3 install git+https://github.com/T-Dynamos/python-for-android@sdl_build_optimize
+pip3 install git+https://github.com/T-Dynamos/python-for-android@recipe_fix
 
 # https://github.com/kivy/python-for-android@develop
 

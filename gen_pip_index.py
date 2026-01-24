@@ -35,7 +35,7 @@ for whl in wheel_root.glob("*.whl"):
     try:
         pkg = pkg_name_from_wheel(whl.name)
     except Exception as e:
-        raise SystemExit(f"Invalid wheel filename: {whl.name}") from e
+        raise SystemExit(f"Invalid wheel filename: {whl.name} because {e}") from e
     packages[pkg].append(whl.name)
 
 print(packages)

@@ -23,10 +23,13 @@ BLACKLIST = {
     "aubio",
     "greenlet",
     "grpcio",
-    "tiktoken",
-    "primp",
-    "setuptools",
+    # failing recipes
+    # "tiktoken",  # idk
+    # "primp",  # armebai
+    # manual build recipes
     "scipy",
+    # skip
+    "setuptools",
 }  # add more if needed
 
 
