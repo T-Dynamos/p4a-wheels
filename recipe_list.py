@@ -26,6 +26,7 @@ BLACKLIST = {
     "tiktoken",
     "primp",
     "setuptools",
+    "scipy",
 }  # add more if needed
 
 
