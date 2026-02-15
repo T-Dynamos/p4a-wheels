@@ -11,7 +11,7 @@ from pythonforandroid.bootstraps.empty import bootstrap
 from pythonforandroid.distribution import Distribution
 from pythonforandroid.androidndk import AndroidNDK
 
-DEFAULT_RECIPES = ["sdl2"]
+DEFAULT_RECIPES = ["sdl3"]
 NDK_DIR = os.environ["NDK_DIR"]
 
 
@@ -31,6 +31,7 @@ class RecipeBuilder:
         self.ctx.ndk_api = parse_args.min_api
         self.ctx.android_api = parse_args.target_api
         self.ctx.ndk_dir = NDK_DIR
+        self.ctx.save_wheel_dir = "/home/tdynamos/p4a_raw_wheels"
 
     def build_recipes(self, recipes, archs):
         info_main(f"# Requested recipes: {Colo_Fore.BLUE}{recipes}")
@@ -47,6 +48,7 @@ class RecipeBuilder:
             archs=archs,
         )
         self.ctx.ndk = AndroidNDK(NDK_DIR)
+        self.ctx.extra_index_urls = []
         recipes = [Recipe.get_recipe(recipe, self.ctx) for recipe in _recipes]
 
         self.ctx.recipe_build_order = _recipes
@@ -71,11 +73,11 @@ class RecipeBuilder:
             info_main("# Building recipes")
             for recipe in recipes:
                 info_main("Building {} for {}".format(recipe.name, arch.arch))
-                recipe.build_arch(arch)
-                # if recipe.should_build(arch):
-                #     recipe.build_arch(arch)
-                # else:
-                #     info("{} said it is already built, skipping".format(recipe.name))
+                # recipe.build_arch(arch)
+                if recipe.should_build(arch):
+                    recipe.build_arch(arch)
+                else:
+                    info("{} said it is already built, skipping".format(recipe.name))
                 recipe.install_libraries(arch)
 
 

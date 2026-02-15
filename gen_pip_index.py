@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 import sys
+import hashlib
+import zipfile
 from pathlib import Path
 from collections import defaultdict
 from packaging.utils import parse_wheel_filename
@@ -17,6 +19,8 @@ if len(sys.argv) != 4:
 
 wheel_root = Path(sys.argv[1])
 base_url = sys.argv[2].rstrip("/")
+if base_url in ("", ".", "./"):
+    base_url = None
 out_root = Path(sys.argv[3])
 
 if not wheel_root.is_dir():
@@ -29,16 +33,40 @@ def pkg_name_from_wheel(filename: str) -> str:
     return name.lower().replace("_", "-")
 
 
+def extract_wheel_metadata_bytes(whl_path: Path) -> bytes | None:
+    """Return the METADATA bytes from a wheel, or None if not found."""
+    try:
+        with zipfile.ZipFile(whl_path, "r") as zf:
+            for name in zf.namelist():
+                if name.endswith(".dist-info/METADATA"):
+                    return zf.read(name)
+    except Exception as e:
+        raise SystemExit(f"Failed to read wheel metadata: {whl_path.name} because {e}") from e
+    return None
+
+
+def iter_wheels_with_progress(root: Path):
+    wheels = sorted(root.glob("*.whl"))
+    total = len(wheels)
+    if total == 0:
+        return []
+    width = 30
+    for i, whl in enumerate(wheels, 1):
+        filled = int(width * i / total)
+        bar = "#" * filled + "-" * (width - filled)
+        print(f"\rCollecting wheels [{bar}] {i}/{total}", end="", flush=True)
+        yield whl
+    print()
+
+
 # Collect wheels by package
 packages = defaultdict(list)
-for whl in wheel_root.glob("*.whl"):
+for whl in iter_wheels_with_progress(wheel_root):
     try:
         pkg = pkg_name_from_wheel(whl.name)
     except Exception as e:
         raise SystemExit(f"Invalid wheel filename: {whl.name} because {e}") from e
     packages[pkg].append(whl.name)
-
-print(packages)
 # p4a root
 p4a_root = out_root / "p4a"
 p4a_root.mkdir(parents=True, exist_ok=True)
@@ -52,7 +80,16 @@ for pkg, wheels in packages.items():
     with index_path.open("w", encoding="utf-8") as f:
         f.write("<!doctype html>\n<html><body>\n")
         for w in wheels:
-            f.write(f'<a href="{base_url}/{w}">{w}</a><br>\n')
+            whl_path = wheel_root / w
+            metadata_bytes = extract_wheel_metadata_bytes(whl_path)
+            metadata_attr = ""
+            if metadata_bytes is not None:
+                metadata_path = whl_path.with_name(whl_path.name + ".metadata")
+                metadata_path.write_bytes(metadata_bytes)
+                metadata_hash = hashlib.sha256(metadata_bytes).hexdigest()
+                metadata_attr = f' data-dist-info-metadata="sha256={metadata_hash}"'
+            href = f"{base_url}/{w}" if base_url else w
+            f.write(f'<a href="{href}"{metadata_attr}>{w}</a><br>\n')
         f.write("</body></html>\n")
 
 # Generate human-friendly landing page at p4a/index.html
