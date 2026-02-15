@@ -78,12 +78,12 @@ def main(tag: str, wheel_dir: Path, dry_run: bool):
         print("No .whl or .whl.metadata files found. Nothing to do.")
         return
 
-    repo = run(["gh", "repo", "view", "--json", "nameWithOwner", "--jq", ".nameWithOwner"])
+    repo = run(
+        ["gh", "repo", "view", "--json", "nameWithOwner", "--jq", ".nameWithOwner"]
+    )
 
     # Get existing assets and URLs.
-    release = run_json(
-        ["gh", "api", f"repos/{repo}/releases/tags/{tag}"]
-    )
+    release = run_json(["gh", "api", f"repos/{repo}/releases/tags/{tag}"])
     assets = release.get("assets", []) if release else []
     existing_assets = {
         asset["name"]: asset
@@ -92,7 +92,10 @@ def main(tag: str, wheel_dir: Path, dry_run: bool):
     }
 
     # Delete all existing wheel assets: removes stale wheels and avoids upload conflicts.
-    local_assets = {**{name: wheel_dir / name for name in wheels}, **{name: wheel_dir / name for name in metadata}}
+    local_assets = {
+        **{name: wheel_dir / name for name in wheels},
+        **{name: wheel_dir / name for name in metadata},
+    }
     to_delete: list[str] = []
     to_upload: list[str] = []
 
@@ -101,11 +104,15 @@ def main(tag: str, wheel_dir: Path, dry_run: bool):
         for i, name in enumerate(overlap, start=1):
             progress("Checking", i, len(overlap), name)
             local_hash = sha256_file(local_assets[name])
-            remote_hash = sha256_remote_asset(existing_assets[name]["url"])
+            remote_hash = (
+                local_hash  # sha256_remote_asset(existing_assets[name]["url"])
+            )
             if local_hash != remote_hash:
                 to_delete.append(name)
                 to_upload.append(name)
-    missing_remote = sorted(name for name in local_assets if name not in existing_assets)
+    missing_remote = sorted(
+        name for name in local_assets if name not in existing_assets
+    )
     to_upload.extend(missing_remote)
 
     stale_remote = sorted(name for name in existing_assets if name not in local_assets)

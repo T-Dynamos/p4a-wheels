@@ -4,6 +4,7 @@ import subprocess
 import re
 import shutil
 from collections import defaultdict
+from packaging.utils import parse_wheel_filename
 
 
 def get_dependencies(so_path):
@@ -42,7 +43,10 @@ def process_wheels():
         )
 
         # Detect architecture
-        arch = "arm64" if "arm64_v8a" in whl else "arm" if "_arm" in whl else "unknown"
+        name, version, build, tags = parse_wheel_filename(whl)
+        tags = [tag.platform for tag in tags]
+        arch = tags[0]
+        # "arm64" if "arm64_v8a" in whl else "arm" if "_arm" in whl else "unknown"
 
         try:
             with zipfile.ZipFile(whl, "r") as z:
