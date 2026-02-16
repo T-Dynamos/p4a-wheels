@@ -83,12 +83,12 @@ def main():
         print(f"- {name} → {cls_name}")
         names.append(name)
 
-    # yes bad code
-    r = f'RECIPES="{ " ".join(names).strip() }"\n'
-    with open("run.sh") as f:
-        lines = [l for l in f if not l.strip().startswith("RECIPES=")]
-    with open("run.sh", "w") as f:
-        f.writelines([r] + lines)
+    # # yes bad code
+    # r = f'RECIPES="{ " ".join(names).strip() }"\n'
+    # with open("run.sh") as f:
+    #     lines = [l for l in f if not l.strip().startswith("RECIPES=")]
+    # with open("run.sh", "w") as f:
+    #     f.writelines([r] + lines)
 
 
 if __name__ == "__main__":

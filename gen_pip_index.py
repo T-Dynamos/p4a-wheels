@@ -3,6 +3,7 @@
 import sys
 import hashlib
 import zipfile
+import html
 from pathlib import Path
 from collections import defaultdict
 from packaging.utils import parse_wheel_filename
@@ -45,16 +46,29 @@ def extract_wheel_metadata_bytes(whl_path: Path) -> bytes | None:
     return None
 
 
+_last_progress_len = 0
+
+
+def print_progress(prefix: str, index: int, total: int, suffix: str = "") -> None:
+    global _last_progress_len
+    width = 30
+    filled = int(width * index / total) if total else width
+    bar = "#" * filled + "-" * (width - filled)
+    tail = f" {suffix}" if suffix else ""
+    text = f"{prefix} [{bar}] {index}/{total}{tail}"
+    # Clear any leftover characters from a longer previous line.
+    padded = text.ljust(_last_progress_len)
+    _last_progress_len = max(_last_progress_len, len(text))
+    print(f"\r{padded}", end="", flush=True)
+
+
 def iter_wheels_with_progress(root: Path):
     wheels = sorted(root.glob("*.whl"))
     total = len(wheels)
     if total == 0:
         return []
-    width = 30
     for i, whl in enumerate(wheels, 1):
-        filled = int(width * i / total)
-        bar = "#" * filled + "-" * (width - filled)
-        print(f"\rCollecting wheels [{bar}] {i}/{total}", end="", flush=True)
+        print_progress("Collecting wheels", i, total)
         yield whl
     print()
 
@@ -71,7 +85,10 @@ for whl in iter_wheels_with_progress(wheel_root):
 p4a_root = out_root / "p4a"
 p4a_root.mkdir(parents=True, exist_ok=True)
 
-# Generate pip-compatible package indexes
+total_wheels = sum(len(wheels) for wheels in packages.values())
+processed_wheels = 0
+
+# Generate pip-compatible package indexes + metadata
 for pkg, wheels in packages.items():
     pkg_dir = p4a_root / pkg
     pkg_dir.mkdir(parents=True, exist_ok=True)
@@ -80,6 +97,8 @@ for pkg, wheels in packages.items():
     with index_path.open("w", encoding="utf-8") as f:
         f.write("<!doctype html>\n<html><body>\n")
         for w in wheels:
+            processed_wheels += 1
+            print_progress("Indexing wheels", processed_wheels, total_wheels, w)
             whl_path = wheel_root / w
             metadata_bytes = extract_wheel_metadata_bytes(whl_path)
             metadata_attr = ""
@@ -91,6 +110,19 @@ for pkg, wheels in packages.items():
             href = f"{base_url}/{w}" if base_url else w
             f.write(f'<a href="{href}"{metadata_attr}>{w}</a><br>\n')
         f.write("</body></html>\n")
+print()
+
+# Collect supported platform tags from wheel filenames
+platform_tags = set()
+for wheels in packages.values():
+    for w in wheels:
+        try:
+            _, _, _, tags = parse_wheel_filename(w)
+            platform_tags.update(tag.platform for tag in tags)
+        except Exception:
+            continue
+if "android_24_arm64_v8a" in platform_tags:
+    platform_tags.add("android_24_aarch64")
 
 # Generate human-friendly landing page at p4a/index.html
 landing_path = p4a_root / "index.html"
@@ -128,16 +160,21 @@ footer {{ margin-top:3rem; font-size:0.85rem; color: var(--muted); }}
 <main>
 <h1>p4a Python Package Index</h1>
 <p>This is a <strong>PEP 503 “simple” Python package index</strong> for use with <code>pip</code>.</p>
-<hr>
-
-<p>To install a package from this index:</p>
-<pre><code>pip install \\
-  --disable-pip-version-check \\
-  --platform=android_24_aarch64 \\
-  --only-binary=:all: \\
-  --extra-index-url https://anshdadwal.is-a.dev/p4a-wheels/p4a \\
-  --target . &lt;package&gt;
-</code></pre>
+<p>Total packages available: <strong>{len(packages)}</strong></p>
+<p>Extra index URL: <strong><code>https://anshdadwal.is-a.dev/p4a-wheels/p4a/</code></strong></p>
+<p>Minimal install command:</p>
+<pre><code>pip install --extra-index-url https://anshdadwal.is-a.dev/p4a-wheels/p4a/ &lt;package&gt;</code></pre>
+<p>Supported platform tags:</p>
+<pre><code>"""
+    )
+    if platform_tags:
+        for tag in sorted(platform_tags):
+            f.write(f"{html.escape(tag)}\n")
+    else:
+        f.write("(none detected)\n")
+    f.write("</code></pre>\n")
+    f.write(
+        """
 
 <p>Available packages:</p>
 <ul>

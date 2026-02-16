@@ -31,7 +31,7 @@ class RecipeBuilder:
         self.ctx.ndk_api = parse_args.min_api
         self.ctx.android_api = parse_args.target_api
         self.ctx.ndk_dir = NDK_DIR
-        self.ctx.save_wheel_dir = "/home/tdynamos/p4a_raw_wheels"
+        self.ctx.save_wheel_dir = parse_args.save_wheel_dir
 
     def build_recipes(self, recipes, archs):
         info_main(f"# Requested recipes: {Colo_Fore.BLUE}{recipes}")
@@ -91,6 +91,13 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "-w", "--workdir", type=str, help="Workdir for building recipes.", required=True
+    )
+    parser.add_argument(
+        "-s",
+        "--save-wheel-dir",
+        type=str,
+        help="Directory to save built wheels.",
+        required=True,
     )
     parser.add_argument(
         "-m", "--min-api", type=int, help="Android ndk (minimum) api.", default=24

@@ -3,6 +3,7 @@ import zipfile
 import subprocess
 import re
 import shutil
+import argparse
 from collections import defaultdict
 from packaging.utils import parse_wheel_filename
 
@@ -20,12 +21,15 @@ def get_dependencies(so_path):
         return []
 
 
-def process_wheels():
-    cwd = os.getcwd()
-    wheels = [f for f in os.listdir(cwd) if f.endswith(".whl")]
+def process_wheels(wheel_dir: str):
+    wheels = [
+        os.path.join(wheel_dir, f)
+        for f in os.listdir(wheel_dir)
+        if f.endswith(".whl")
+    ]
 
     if not wheels:
-        print("No .whl files found in current directory.")
+        print("No .whl files found in the target directory.")
         return
 
     arch_summary = defaultdict(set)
@@ -33,17 +37,19 @@ def process_wheels():
     temp_dir = "temp_extract"
 
     for index, whl in enumerate(wheels, 1):
+        whl_name = os.path.basename(whl)
         # Progress calculation
         percent = (index / total_wheels) * 100
         # Dynamic print with \r to overwrite the line
         print(
-            f"\rScanning ({percent:3.0f}%): {whl[:70] + '...' if len(whl) > 70 else whl.ljust(70)}",
+            f"\rScanning ({percent:3.0f}%): "
+            f"{whl_name[:70] + '...' if len(whl_name) > 70 else whl_name.ljust(70)}",
             end="",
             flush=True,
         )
 
         # Detect architecture
-        name, version, build, tags = parse_wheel_filename(whl)
+        name, version, build, tags = parse_wheel_filename(whl_name)
         tags = [tag.platform for tag in tags]
         arch = tags[0]
         # "arm64" if "arm64_v8a" in whl else "arm" if "_arm" in whl else "unknown"
@@ -90,4 +96,14 @@ def process_wheels():
 
 
 if __name__ == "__main__":
-    process_wheels()
+    parser = argparse.ArgumentParser(
+        description="Scan .whl files and report consolidated .so dependencies."
+    )
+    parser.add_argument(
+        "wheel_dir",
+        nargs="?",
+        default=os.getcwd(),
+        help="Directory containing .whl files (default: current working directory).",
+    )
+    args = parser.parse_args()
+    process_wheels(args.wheel_dir)
