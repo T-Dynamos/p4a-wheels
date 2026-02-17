@@ -11,7 +11,7 @@ from pythonforandroid.bootstraps.empty import bootstrap
 from pythonforandroid.distribution import Distribution
 from pythonforandroid.androidndk import AndroidNDK
 
-DEFAULT_RECIPES = ["sdl3"]
+DEFAULT_RECIPES = ["sdl3", "libbz2", "liblzma"]
 NDK_DIR = os.environ["NDK_DIR"]
 
 
@@ -33,7 +33,22 @@ class RecipeBuilder:
         self.ctx.ndk_dir = NDK_DIR
         self.ctx.save_wheel_dir = parse_args.save_wheel_dir
 
+    def parse_recipes(self, recipes):
+        v_recipe = []
+
+        for recipe in recipes:
+            if "==" in recipe:
+                recipe, version = recipe.split("==")
+                os.environ[f"VERSION_{recipe}"] = version
+                v_recipe.append(recipe)
+            else:
+                v_recipe.append(recipe)
+
+        return v_recipe
+
     def build_recipes(self, recipes, archs):
+
+        recipes = self.parse_recipes(recipes)
         info_main(f"# Requested recipes: {Colo_Fore.BLUE}{recipes}")
 
         _recipes, _non_recipes, bootstrap = get_recipe_order_and_bootstrap(
