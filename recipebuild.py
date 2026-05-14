@@ -11,7 +11,7 @@ from pythonforandroid.bootstraps.empty import bootstrap
 from pythonforandroid.distribution import Distribution
 from pythonforandroid.androidndk import AndroidNDK
 
-DEFAULT_RECIPES = ["sdl3", "libbz2", "liblzma"]
+DEFAULT_RECIPES = ["sdl2", "libbz2", "liblzma"]
 NDK_DIR = os.environ["NDK_DIR"]
 
 
@@ -21,7 +21,7 @@ class RecipeBuilder:
         self.build_dir = parsed_args.workdir
         self.init_context(parsed_args)
         self.build_recipes(
-            set(parsed_args.recipes + DEFAULT_RECIPES), set(parsed_args.arch)
+            set(parsed_args.recipes + DEFAULT_RECIPES), parsed_args.arch
         )
 
     def init_context(self, parse_args):
@@ -55,6 +55,7 @@ class RecipeBuilder:
             self.ctx, recipes
         )
         self.ctx.prepare_bootstrap(bootstrap)
+
         self.ctx.set_archs(archs)
         self.ctx.bootstrap.distribution = Distribution.get_distribution(
             self.ctx,
