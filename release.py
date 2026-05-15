@@ -105,9 +105,10 @@ def main(tag: str, wheel_dir: Path, dry_run: bool):
             progress("Checking", i, len(overlap), name)
             local_hash = sha256_file(local_assets[name])
             remote_hash = (
-                local_hash  # sha256_remote_asset(existing_assets[name]["url"])
+                sha256_remote_asset(existing_assets[name]["url"])
             )
             if local_hash != remote_hash:
+                print(f"Mismatch: {name}")
                 to_delete.append(name)
                 to_upload.append(name)
     missing_remote = sorted(
