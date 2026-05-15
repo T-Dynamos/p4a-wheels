@@ -49,25 +49,6 @@ def sha256_file(path: Path) -> str:
     return hasher.hexdigest()
 
 
-def sha256_remote_asset(url: str) -> str:
-    hasher = hashlib.sha256()
-    with tempfile.NamedTemporaryFile() as tmp:
-        with subprocess.Popen(
-            ["gh", "api", "-H", "Accept: application/octet-stream", url],
-            stdout=tmp,
-            stderr=subprocess.PIPE,
-            text=False,
-        ) as proc:
-            _, stderr = proc.communicate()
-            if proc.returncode != 0:
-                raise subprocess.CalledProcessError(proc.returncode, proc.args, stderr)
-        tmp.flush()
-        tmp.seek(0)
-        for chunk in iter(lambda: tmp.read(1024 * 1024), b""):
-            hasher.update(chunk)
-    return hasher.hexdigest()
-
-
 def main(tag: str, wheel_dir: Path, dry_run: bool):
     if not wheel_dir.exists() or not wheel_dir.is_dir():
         raise SystemExit(f"Invalid directory: {wheel_dir}")
@@ -104,9 +85,11 @@ def main(tag: str, wheel_dir: Path, dry_run: bool):
         for i, name in enumerate(overlap, start=1):
             progress("Checking", i, len(overlap), name)
             local_hash = sha256_file(local_assets[name])
-            remote_hash = (
-                sha256_remote_asset(existing_assets[name]["url"])
-            )
+            # Attempt to use the 'digest' field from the release API response.
+            # Fall back to empty string if not present.
+            # Digest is returned as "sha256:..."
+            remote_digest = existing_assets[name].get("digest", "")
+            remote_hash = remote_digest.replace("sha256:", "")
             if local_hash != remote_hash:
                 print(f"Mismatch: {name}")
                 to_delete.append(name)
