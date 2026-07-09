@@ -32,6 +32,7 @@ class RecipeBuilder:
         self.ctx.android_api = parse_args.target_api
         self.ctx.ndk_dir = NDK_DIR
         self.ctx.save_wheel_dir = parse_args.save_wheel_dir
+        self.ctx.python_recipe = Recipe.get_recipe('python3', self.ctx)
 
     def parse_recipes(self, recipes):
         v_recipe = []
